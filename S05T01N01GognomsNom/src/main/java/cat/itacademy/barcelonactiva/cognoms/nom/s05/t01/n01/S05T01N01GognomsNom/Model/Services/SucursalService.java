@@ -6,27 +6,46 @@ import cat.itacademy.barcelonactiva.cognoms.nom.s05.t01.n01.S05T01N01GognomsNom.
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class SucursalService {
+    // Permite que el servicio interactúe con la capa de acceso a datos.
     @Autowired
     SucursalRepository sucursalRepository;
 
-    public Sucursal save(Sucursal sucursal) {
-        return sucursalRepository.save(sucursal);
-    }
     public SucursalDTO toDTO(Sucursal sucursal) {
-        SucursalDTO dto = new SucursalDTO();
-        dto.setPk_sucursalId(sucursal.getPk_sucursalId());
-        dto.setNombreSucursal(sucursal.getNombreSucursal());
-        dto.setPaisSucursal(sucursal.getPaisSucursal());
+        SucursalDTO dto = new SucursalDTO(sucursal.getPk_sucursalId(), sucursal.getNombreSucursal(), sucursal.getPaisSucursal());
+        dto.setTipoSucursal(sucursal.getPaisSucursal());
         return dto;
     }
 
     public Sucursal toEntity(SucursalDTO dto) {
-        Sucursal sucursal = new Sucursal();
-        sucursal.setPk_sucursalId(dto.getPk_sucursalId());
-        sucursal.setNombreSucursal(dto.getNombreSucursal());
-        sucursal.setPaisSucursal(dto.getPaisSucursal());
+        Sucursal sucursal = new Sucursal(dto.getPk_sucursalId(), dto.getNombreSucursal(), dto.getPaisSucursal());
         return sucursal;
+    }
+
+    public void save(Sucursal sucursal) {
+        sucursalRepository.save(sucursal);
+    }
+
+    public List<Sucursal> getAllSucursales() {
+        return sucursalRepository.findAll();
+    }
+
+    public Sucursal getSucursalById(long id) {
+        if (!sucursalRepository.existsById(id)) throw new RuntimeException("No existe la sucursal con id: " + id);
+        else {
+            Sucursal sucursal = sucursalRepository.findById(id).get();
+            return sucursal;
+        }
+    }
+
+    public void delete(long id) {
+        if (!sucursalRepository.existsById(id)) throw new RuntimeException("No existe la sucursal con id: " + id);
+        else {
+            sucursalRepository.deleteById(id);
+        }
     }
 }

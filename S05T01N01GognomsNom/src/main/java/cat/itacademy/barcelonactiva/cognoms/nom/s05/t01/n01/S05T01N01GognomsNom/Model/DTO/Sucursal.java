@@ -1,20 +1,31 @@
 package cat.itacademy.barcelonactiva.cognoms.nom.s05.t01.n01.S05T01N01GognomsNom.Model.DTO;
 
-import jakarta.persistence.GeneratedValue;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "tbl_sucursal")
 public class Sucursal {
     @Id
-    @GeneratedValue
-    private int pk_sucursalId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "pk_sucursal_id")
+    private long pk_sucursalId;
     private String nombreSucursal;
     private String paisSucursal;
 
-    public int getPk_sucursalId() {
+    public Sucursal() {
+    }
+
+    public Sucursal(long id, String nombre, String pais) {
+        this.pk_sucursalId = id;
+        this.nombreSucursal = nombre;
+        this.paisSucursal = pais;
+    }
+
+    public long getPk_sucursalId() {
         return pk_sucursalId;
     }
 
-    public void setPk_sucursalId(int pk_sucursalId) {
+    public void setPk_sucursalId(Long pk_sucursalId) {
         this.pk_sucursalId = pk_sucursalId;
     }
 
