@@ -12,8 +12,13 @@ import java.util.Optional;
 @Service
 public class SucursalService {
     // Permite que el servicio interactúe con la capa de acceso a datos.
+
+    private final SucursalRepository sucursalRepository;
+
     @Autowired
-    SucursalRepository sucursalRepository;
+    public SucursalService(SucursalRepository sucursalRepository) {
+        this.sucursalRepository = sucursalRepository;
+    }
 
     public SucursalDTO toDTO(Sucursal sucursal) {
         SucursalDTO dto = new SucursalDTO(sucursal.getPk_sucursalId(), sucursal.getNombreSucursal(), sucursal.getPaisSucursal());
@@ -22,19 +27,30 @@ public class SucursalService {
     }
 
     public Sucursal toEntity(SucursalDTO dto) {
-        Sucursal sucursal = new Sucursal(dto.getPk_sucursalId(), dto.getNombreSucursal(), dto.getPaisSucursal());
+        Sucursal sucursal = new Sucursal(dto.getNombreSucursal(), dto.getPaisSucursal());
         return sucursal;
     }
 
     public void save(Sucursal sucursal) {
-        sucursalRepository.save(sucursal);
+        if (sucursal.getPk_sucursalId() == null) {
+            sucursalRepository.save(sucursal);
+        }
+        else {
+            Optional<Sucursal> sucursalOptional = sucursalRepository.findById(sucursal.getPk_sucursalId());
+            if (sucursalOptional.isPresent()) {
+                Sucursal sucursalToUpdate = sucursalOptional.get();
+                sucursalToUpdate.setNombreSucursal(sucursal.getNombreSucursal());
+                sucursalToUpdate.setPaisSucursal(sucursal.getPaisSucursal());
+                sucursalRepository.save(sucursalToUpdate);
+            }
+        }
     }
 
     public List<Sucursal> getAllSucursales() {
         return sucursalRepository.findAll();
     }
 
-    public Sucursal getSucursalById(long id) {
+    public Sucursal getSucursalById(Long id) {
         if (!sucursalRepository.existsById(id)) throw new RuntimeException("No existe la sucursal con id: " + id);
         else {
             Sucursal sucursal = sucursalRepository.findById(id).get();
@@ -42,7 +58,7 @@ public class SucursalService {
         }
     }
 
-    public void delete(long id) {
+    public void delete(Long id) {
         if (!sucursalRepository.existsById(id)) throw new RuntimeException("No existe la sucursal con id: " + id);
         else {
             sucursalRepository.deleteById(id);

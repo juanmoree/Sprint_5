@@ -19,20 +19,24 @@ import java.util.stream.Collectors;
 @RequestMapping("/sucursales")
 public class SucursalController {
     @Autowired
-    SucursalService sucursalService;
+    private final SucursalService sucursalService;
     @Autowired
     SucursalRepository sucursalRepository;
 
+    public SucursalController(SucursalService sucursalService) {
+        this.sucursalService = sucursalService;
+    }
+
     @PostMapping("/add")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Sucursal addOrUpdate(@RequestBody SucursalDTO sucursalDTO) {
+    @ResponseBody
+    public Sucursal add(@RequestBody SucursalDTO sucursalDTO) {
         Sucursal sucursal = sucursalService.toEntity(sucursalDTO);
         sucursalService.save(sucursal);
         return sucursal;
     }
 
     @PutMapping("/update")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
     public Sucursal updateSucursal(@RequestBody SucursalDTO sucursalDTO) {
         Sucursal sucursal = sucursalService.toEntity(sucursalDTO);
         sucursalService.save(sucursal);
@@ -40,19 +44,19 @@ public class SucursalController {
     }
 
     @DeleteMapping("/delete/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteSucursal(@PathVariable long id) {
+    @ResponseBody
+    public void deleteSucursal(@PathVariable Long id) {
         sucursalService.delete(id);
     }
 
     @GetMapping("/getOne/{id}")
-    @ResponseStatus(HttpStatus.FOUND)
-    public Sucursal getOneSucursal(@PathVariable long id) {
+    @ResponseBody
+    public Sucursal getOneSucursal(@PathVariable Long id) {
         return sucursalService.getSucursalById(id);
     }
 
     @GetMapping("/getAll")
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseBody
     public List<Sucursal> getAllSucursal() {
         return sucursalService.getAllSucursales();
     }
@@ -86,14 +90,14 @@ public class SucursalController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editSucursal(@PathVariable long id, Model model) {
+    public String editSucursal(@PathVariable Long id, Model model) {
         Sucursal sucursal = sucursalService.getSucursalById(id);
         model.addAttribute("sucursal", sucursal);
         return "form";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteSucursal1(@PathVariable long id) {
+    public String deleteSucursal1(@PathVariable Long id) {
         sucursalService.delete(id);
         return "redirect:/sucursales/list";
     }

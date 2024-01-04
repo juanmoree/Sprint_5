@@ -5,7 +5,7 @@ import java.util.List;
 
 public class SucursalDTO {
 
-    private long pk_sucursalId;
+    private Long pk_sucursalId;
     private String nombreSucursal;
     private String paisSucursal;
     private String tipoSucursal;
@@ -13,7 +13,7 @@ public class SucursalDTO {
     public SucursalDTO() {
     }
 
-    public SucursalDTO(long id, String nombre, String pais) {
+    public SucursalDTO(Long id, String nombre, String pais) {
         this.pk_sucursalId = id;
         this.nombreSucursal = nombre;
         this.paisSucursal = pais;

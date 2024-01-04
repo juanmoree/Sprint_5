@@ -8,20 +8,25 @@ public class Sucursal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pk_sucursal_id")
-    private long pk_sucursalId;
+    private Long pk_sucursalId;
     private String nombreSucursal;
     private String paisSucursal;
 
     public Sucursal() {
     }
 
-    public Sucursal(long id, String nombre, String pais) {
+    public Sucursal(Long id, String nombre, String pais) {
         this.pk_sucursalId = id;
         this.nombreSucursal = nombre;
         this.paisSucursal = pais;
     }
 
-    public long getPk_sucursalId() {
+    public Sucursal(String nombre, String pais) {
+        this.nombreSucursal = nombre;
+        this.paisSucursal = pais;
+    }
+
+    public Long getPk_sucursalId() {
         return pk_sucursalId;
     }
 
