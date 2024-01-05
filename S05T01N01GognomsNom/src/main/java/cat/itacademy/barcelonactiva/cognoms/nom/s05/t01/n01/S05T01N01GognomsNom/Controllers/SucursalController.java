@@ -2,10 +2,9 @@ package cat.itacademy.barcelonactiva.cognoms.nom.s05.t01.n01.S05T01N01GognomsNom
 
 import cat.itacademy.barcelonactiva.cognoms.nom.s05.t01.n01.S05T01N01GognomsNom.Model.DTO.Sucursal;
 import cat.itacademy.barcelonactiva.cognoms.nom.s05.t01.n01.S05T01N01GognomsNom.Model.DTO.SucursalDTO;
-import cat.itacademy.barcelonactiva.cognoms.nom.s05.t01.n01.S05T01N01GognomsNom.Model.Repository.SucursalRepository;
 import cat.itacademy.barcelonactiva.cognoms.nom.s05.t01.n01.S05T01N01GognomsNom.Model.Services.SucursalService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,15 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 // Controller en lugar de RestController para poder usar Thymeleaf
 @Controller
 @RequestMapping("/sucursales")
 public class SucursalController {
     @Autowired
     private final SucursalService sucursalService;
-    @Autowired
-    SucursalRepository sucursalRepository;
 
     public SucursalController(SucursalService sucursalService) {
         this.sucursalService = sucursalService;
@@ -29,8 +25,7 @@ public class SucursalController {
 
     @PostMapping("/add")
     @ResponseBody
-    public Sucursal add(@RequestBody SucursalDTO sucursalDTO) {
-        Sucursal sucursal = sucursalService.toEntity(sucursalDTO);
+    public Sucursal add(@RequestBody Sucursal sucursal) {
         sucursalService.save(sucursal);
         return sucursal;
     }
@@ -62,10 +57,14 @@ public class SucursalController {
     }
 
 
-                                ///// Thymeleaf - HTML /////
+
+                 ///////////////////// Thymeleaf - HTML /////////////////////
+
+
+
     @GetMapping("/list")
     public String listSucursales(Model model) {
-        List<Sucursal> sucursales = sucursalRepository.findAll();
+        List<Sucursal> sucursales = sucursalService.getAllSucursales();
 
         // Convierte las entidades a DTOs y agrega la lista de DTOs al modelo
         List<SucursalDTO> sucursalDTOs = sucursales.stream()
@@ -83,14 +82,14 @@ public class SucursalController {
     }
 
     @PostMapping("/save")
-    public String saveSucursal(@ModelAttribute SucursalDTO sucursalDTO) {
-        Sucursal sucursal = sucursalService.toEntity(sucursalDTO);
+    public String saveSucursal(@ModelAttribute Sucursal sucursal) {
         sucursalService.save(sucursal);
         return "redirect:/sucursales/list";
     }
 
     @GetMapping("/edit/{id}")
-    public String editSucursal(@PathVariable Long id, Model model) {
+    @Transactional
+    public String editSucursal(Model model, @PathVariable Long id) {
         Sucursal sucursal = sucursalService.getSucursalById(id);
         model.addAttribute("sucursal", sucursal);
         return "form";

@@ -7,12 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SucursalService {
-    // Permite que el servicio interactúe con la capa de acceso a datos.
 
+    // Permite que el servicio interactúe con la capa de acceso a datos.
     private final SucursalRepository sucursalRepository;
 
     @Autowired
@@ -27,23 +26,11 @@ public class SucursalService {
     }
 
     public Sucursal toEntity(SucursalDTO dto) {
-        Sucursal sucursal = new Sucursal(dto.getNombreSucursal(), dto.getPaisSucursal());
-        return sucursal;
+        return new Sucursal(dto.getPk_sucursalId(), dto.getNombreSucursal(), dto.getPaisSucursal());
     }
 
     public void save(Sucursal sucursal) {
-        if (sucursal.getPk_sucursalId() == null) {
-            sucursalRepository.save(sucursal);
-        }
-        else {
-            Optional<Sucursal> sucursalOptional = sucursalRepository.findById(sucursal.getPk_sucursalId());
-            if (sucursalOptional.isPresent()) {
-                Sucursal sucursalToUpdate = sucursalOptional.get();
-                sucursalToUpdate.setNombreSucursal(sucursal.getNombreSucursal());
-                sucursalToUpdate.setPaisSucursal(sucursal.getPaisSucursal());
-                sucursalRepository.save(sucursalToUpdate);
-            }
-        }
+        sucursalRepository.save(sucursal);
     }
 
     public List<Sucursal> getAllSucursales() {
