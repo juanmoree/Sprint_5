@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,5 +27,6 @@ public class Player {
 
     public Player(String name) {
         this.name = name;
+        this.games = new ArrayList<>();
     }
 }

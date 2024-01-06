@@ -33,4 +33,9 @@ public class PlayerController {
         playerService.updatePlayerName(playerId, newName);
     }
 
+    @PostMapping ("/{id}/games")
+    public ResponseEntity<String> playerRollsDice (@PathVariable Long id){
+        playerService.playerRollsDice(id);
+        return new ResponseEntity<>("Tirada realizada con éxito", HttpStatus.OK);
+    }
 }
