@@ -1,4 +1,4 @@
-package Sprint5.T2.n1.JuegoDeDados.Model;
+package Sprint5.T2.n1.JuegoDeDados.Model.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -6,7 +6,6 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -30,6 +29,16 @@ public class Player {
     public Player(String name) {
         this.name = name;
         this.games = new ArrayList<>();
+    }
+
+    public double calculateWinningAverage(){
+        long totalWonGames = getGames().stream().filter(Game::isWin).count();
+        long totalGames = getGames().size();
+
+        if (totalGames == 0){
+            return 0.0;
+        }
+        return (double) totalWonGames / totalGames * 100;
     }
 
 

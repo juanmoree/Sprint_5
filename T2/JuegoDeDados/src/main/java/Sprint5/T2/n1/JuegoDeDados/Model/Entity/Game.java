@@ -1,4 +1,4 @@
-package Sprint5.T2.n1.JuegoDeDados.Model;
+package Sprint5.T2.n1.JuegoDeDados.Model.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

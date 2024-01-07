@@ -1,7 +1,7 @@
 package Sprint5.T2.n1.JuegoDeDados.Controllers;
 
 import Sprint5.T2.n1.JuegoDeDados.Model.DTO.PlayerDTO;
-import Sprint5.T2.n1.JuegoDeDados.Model.Player;
+import Sprint5.T2.n1.JuegoDeDados.Model.Entity.Player;
 import Sprint5.T2.n1.JuegoDeDados.Services.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,8 +48,13 @@ public class PlayerController {
     }
 
     @GetMapping
-    @ResponseBody
     public List<PlayerDTO> allPlayersWithAverage() {
         return playerService.getPlayersWithAverage();
+    }
+
+    @GetMapping("{id}/games")
+    @ResponseStatus (HttpStatus.OK)
+    public Map<String, Object> playerGamesById(@PathVariable Long id){
+        return playerService.getPlayerGamesById(id);
     }
 }

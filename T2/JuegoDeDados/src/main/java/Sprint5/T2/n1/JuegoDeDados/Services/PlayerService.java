@@ -1,12 +1,14 @@
 package Sprint5.T2.n1.JuegoDeDados.Services;
 
 import Sprint5.T2.n1.JuegoDeDados.Model.DTO.PlayerDTO;
-import Sprint5.T2.n1.JuegoDeDados.Model.Player;
+import Sprint5.T2.n1.JuegoDeDados.Model.Entity.Player;
 import Sprint5.T2.n1.JuegoDeDados.Repository.PlayerRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -72,4 +74,12 @@ public class PlayerService {
                 .collect(Collectors.toList());
     }
 
+    public Map<String, Object> getPlayerGamesById(Long id) {
+        if (!playerRepository.existsById(id)){
+            throw new EntityNotFoundException("No existe un jugador con el id " + id);
+        }
+        Player player = playerRepository.getReferenceById(id);
+
+        return gameService.getGamesByPlayer(player);
+    }
 }
