@@ -6,6 +6,7 @@ import Sprint5.T2.n1.JuegoDeDados.Model.Entity.Game;
 import Sprint5.T2.n1.JuegoDeDados.Model.Entity.Player;
 import Sprint5.T2.n1.JuegoDeDados.Repository.GameRepository;
 import Sprint5.T2.n1.JuegoDeDados.Repository.PlayerRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,17 +30,24 @@ public class GameService {
     }
 
     public void newGameByIdPlayer(PlayerRepository playerRepository, Long id) {
-        Optional<Player> existingPlayer = playerRepository.findById(id);
-        if (existingPlayer.isPresent()) {
-            byte dice1 = (byte) (Math.random() * 6 + 1);
-            byte dice2 = (byte) (Math.random() * 6 + 1);
-            Game game = new Game(existingPlayer.get(), dice1, dice2);
+        Optional<Player> existingPlayerOptional = playerRepository.findById(id);
 
-            existingPlayer.get().getGames().add(game);
+        if (existingPlayerOptional.isPresent()) {
+            Player existingPlayer = existingPlayerOptional.get();
+            byte dice1 = rolldice();
+            byte dice2 = rolldice();
+
+            Game game = new Game(existingPlayer, dice1, dice2);
+
+            existingPlayer.getGames().add(game);
             gameRepository.save(game);
         } else {
-            throw new IllegalStateException("Jugador no encontrado");
+            throw new EntityNotFoundException("Jugador no encontrado");
         }
+    }
+
+    private byte rolldice() {
+        return (byte) (Math.random() * 6 + 1);
     }
 
     public void deleteAllGamesByIdPlayer(PlayerRepository playerRepository, Long id) {
