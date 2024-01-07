@@ -51,4 +51,8 @@ public class PlayerService {
     public void playerRollsDice(Long id) {
         gameService.newGameByIdPlayer(playerRepository, id);
     }
+
+    public void playerDeleteGames(Long id) {
+        gameService.deleteAllGamesByIdPlayer(playerRepository, id);
+    }
 }

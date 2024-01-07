@@ -18,6 +18,7 @@ public class Game {
     @JoinColumn(name = "player_id") // Verificar nombre
     private Player player;
 
+    public Game (){}
     public Game (Player player, byte dice1, byte dice2){
         this.player = player;
         this.dice1 = dice1;

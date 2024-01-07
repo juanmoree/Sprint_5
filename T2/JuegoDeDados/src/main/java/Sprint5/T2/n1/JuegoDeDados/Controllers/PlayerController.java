@@ -38,4 +38,10 @@ public class PlayerController {
         playerService.playerRollsDice(id);
         return new ResponseEntity<>("Tirada realizada con éxito", HttpStatus.OK);
     }
+
+    @DeleteMapping ("{id}/games")
+    public ResponseEntity<String> playerDeleteGames (@PathVariable Long id){
+        playerService.playerDeleteGames(id);
+        return new ResponseEntity<>("Partidas eliminadas con éxito", HttpStatus.OK);
+    }
 }

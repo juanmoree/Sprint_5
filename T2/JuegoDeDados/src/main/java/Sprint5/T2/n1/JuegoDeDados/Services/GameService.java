@@ -21,13 +21,27 @@ public class GameService {
 
     public void newGameByIdPlayer(PlayerRepository playerRepository, Long id) {
         Optional<Player> existingPlayer = playerRepository.findById(id);
-        if (existingPlayer.isPresent()){
+        if (existingPlayer.isPresent()) {
             byte dice1 = (byte) (Math.random() * 6 + 1);
             byte dice2 = (byte) (Math.random() * 6 + 1);
             Game game = new Game(existingPlayer.get(), dice1, dice2);
 
             existingPlayer.get().getGames().add(game);
             gameRepository.save(game);
+        } else {
+            throw new IllegalStateException("Jugador no encontrado");
+        }
+    }
+
+    public void deleteAllGamesByIdPlayer(PlayerRepository playerRepository, Long id) {
+        Optional<Player> existingPlayer = playerRepository.findById(id);
+        if (existingPlayer.isPresent()) {
+            if (existingPlayer.get().getGames().isEmpty()) {
+                throw new IllegalStateException("No hay partidas que eliminar");
+            }
+            gameRepository.deleteAllInBatch(existingPlayer.get().getGames());
+        } else {
+            throw new IllegalStateException("Jugador no encontrado");
         }
     }
 }
