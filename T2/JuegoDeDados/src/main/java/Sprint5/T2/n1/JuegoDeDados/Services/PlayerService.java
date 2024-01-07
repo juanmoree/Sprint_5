@@ -55,4 +55,8 @@ public class PlayerService {
     public void playerDeleteGames(Long id) {
         gameService.deleteAllGamesByIdPlayer(playerRepository, id);
     }
+
+    public void getPlayersWithAverage() {
+
+    }
 }

@@ -27,21 +27,26 @@ public class PlayerController {
     }
 
     @PutMapping
-    public void updatePlayer(@RequestBody Map<String, Object> data){
+    public void updatePlayer(@RequestBody Map<String, Object> data) {
         Long playerId = Long.parseLong(data.get("id").toString());
         String newName = data.get("name").toString();
         playerService.updatePlayerName(playerId, newName);
     }
 
-    @PostMapping ("/{id}/games")
-    public ResponseEntity<String> playerRollsDice (@PathVariable Long id){
+    @PostMapping("/{id}/games")
+    public ResponseEntity<String> playerRollsDice(@PathVariable Long id) {
         playerService.playerRollsDice(id);
         return new ResponseEntity<>("Tirada realizada con éxito", HttpStatus.OK);
     }
 
-    @DeleteMapping ("{id}/games")
-    public ResponseEntity<String> playerDeleteGames (@PathVariable Long id){
+    @DeleteMapping("{id}/games")
+    public ResponseEntity<String> playerDeleteGames(@PathVariable Long id) {
         playerService.playerDeleteGames(id);
         return new ResponseEntity<>("Partidas eliminadas con éxito", HttpStatus.OK);
+    }
+
+    @GetMapping
+    public void allPlayersWithAverage() {
+        playerService.getPlayersWithAverage();
     }
 }
