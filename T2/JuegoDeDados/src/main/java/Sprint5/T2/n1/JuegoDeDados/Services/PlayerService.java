@@ -7,9 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,7 +23,7 @@ public class PlayerService {
         this.playerRepository = playerRepository;
     }
 
-    public PlayerDTO toDTO (Player player){
+    public PlayerDTO toDTO(Player player) {
         return new PlayerDTO(player);
     }
 
@@ -75,11 +73,23 @@ public class PlayerService {
     }
 
     public Map<String, Object> getPlayerGamesById(Long id) {
-        if (!playerRepository.existsById(id)){
+        if (!playerRepository.existsById(id)) {
             throw new EntityNotFoundException("No existe un jugador con el id " + id);
         }
         Player player = playerRepository.getReferenceById(id);
 
         return gameService.getGamesByPlayer(player);
+    }
+
+    public float getAverageRankingPlayers() {
+        if (playerRepository == null) {
+            throw new EntityNotFoundException("No existe ningún jugador");
+        }
+        List<Player> players = playerRepository.findAll();
+        float count = 0;
+        for (Player x : players) {
+            count += (float) x.calculateWinningAverage();
+        }
+        return count / players.size();
     }
 }

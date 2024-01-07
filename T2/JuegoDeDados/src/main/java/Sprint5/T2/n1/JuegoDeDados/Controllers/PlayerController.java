@@ -57,4 +57,10 @@ public class PlayerController {
     public Map<String, Object> playerGamesById(@PathVariable Long id){
         return playerService.getPlayerGamesById(id);
     }
+
+    @GetMapping("/ranking")
+    @ResponseStatus (HttpStatus.OK)
+    public float averageRankingAllPlayers (){
+        return playerService.getAverageRankingPlayers();
+    }
 }
