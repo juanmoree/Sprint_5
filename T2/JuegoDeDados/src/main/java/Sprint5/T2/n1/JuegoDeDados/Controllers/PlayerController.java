@@ -69,5 +69,9 @@ public class PlayerController {
     @ResponseStatus (HttpStatus.OK)
     public List<PlayerDTO> playerWorseAverage(){
         return playerService.getPlayerWorseAverage();
+    }@GetMapping("/ranking/winner")
+    @ResponseStatus (HttpStatus.OK)
+    public List<PlayerDTO> playerBestAverage(){
+        return playerService.getPlayerBestAverage();
     }
 }

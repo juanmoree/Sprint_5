@@ -112,4 +112,23 @@ public class PlayerService {
         }
         return null;
     }
+
+    // Retorna lista por si hay mas de un jugador con el mismo promedio.
+    public List<PlayerDTO> getPlayerBestAverage() {
+        if (playerRepository == null) {
+            throw new EntityNotFoundException("No existe ningún jugador");
+        }
+
+        Optional<Player> playerWorseAverage = playerRepository.findAll().stream()
+                .max(Comparator.comparingDouble(Player::calculateWinningAverage));
+
+        if (playerWorseAverage.isPresent()){
+            double bestAverage = playerWorseAverage.get().calculateWinningAverage();
+            List<Player> sameAverage = playerRepository.findAll().stream()
+                    .filter(player -> player.calculateWinningAverage() == bestAverage)
+                    .toList();
+            return sameAverage.stream().map(this::toDTO).toList();
+        }
+        return null;
+    }
 }
