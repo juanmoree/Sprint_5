@@ -1,5 +1,6 @@
 package Sprint5.T2.n1.JuegoDeDados.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,7 +20,8 @@ public class Player {
     @Column(unique = true)
     private String name;
     private LocalDate date = LocalDate.now();
-    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore // Evita que se serialice la lista de juegos cuando se serializa el jugador.
     private List<Game> games;
 
     public Player() {
@@ -29,4 +31,6 @@ public class Player {
         this.name = name;
         this.games = new ArrayList<>();
     }
+
+
 }

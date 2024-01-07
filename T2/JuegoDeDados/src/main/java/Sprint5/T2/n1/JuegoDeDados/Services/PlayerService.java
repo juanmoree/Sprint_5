@@ -1,12 +1,14 @@
 package Sprint5.T2.n1.JuegoDeDados.Services;
 
-import Sprint5.T2.n1.JuegoDeDados.Model.Game;
+import Sprint5.T2.n1.JuegoDeDados.Model.DTO.PlayerDTO;
 import Sprint5.T2.n1.JuegoDeDados.Model.Player;
 import Sprint5.T2.n1.JuegoDeDados.Repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PlayerService {
@@ -15,9 +17,14 @@ public class PlayerService {
     @Autowired
     private final PlayerRepository playerRepository;
 
+
     public PlayerService(GameService gameService, PlayerRepository playerRepository) {
         this.gameService = gameService;
         this.playerRepository = playerRepository;
+    }
+
+    public PlayerDTO toDTO (Player player){
+        return new PlayerDTO(player);
     }
 
     public void addPlayer(Player player) {
@@ -56,7 +63,13 @@ public class PlayerService {
         gameService.deleteAllGamesByIdPlayer(playerRepository, id);
     }
 
-    public void getPlayersWithAverage() {
+    public List<PlayerDTO> getPlayersWithAverage() {
+        List<Player> players = playerRepository.findAll();
 
+
+        return players.stream()
+                .map(player -> toDTO(player))
+                .collect(Collectors.toList());
     }
+
 }
