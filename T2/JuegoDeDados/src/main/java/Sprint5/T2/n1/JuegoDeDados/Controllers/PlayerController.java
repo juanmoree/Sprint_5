@@ -29,6 +29,7 @@ public class PlayerController {
     }
 
     @PutMapping
+    @ResponseStatus (HttpStatus.OK)
     public void updatePlayer(@RequestBody Map<String, Object> data) {
         Long playerId = Long.parseLong(data.get("id").toString());
         String newName = data.get("name").toString();
@@ -62,5 +63,11 @@ public class PlayerController {
     @ResponseStatus (HttpStatus.OK)
     public float averageRankingAllPlayers (){
         return playerService.getAverageRankingPlayers();
+    }
+
+    @GetMapping("/ranking/loser")
+    @ResponseStatus (HttpStatus.OK)
+    public List<PlayerDTO> playerWorseAverage(){
+        return playerService.getPlayerWorseAverage();
     }
 }

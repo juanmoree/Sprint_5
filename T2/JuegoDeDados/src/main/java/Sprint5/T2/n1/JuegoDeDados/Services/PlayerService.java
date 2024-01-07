@@ -68,7 +68,7 @@ public class PlayerService {
 
 
         return players.stream()
-                .map(player -> toDTO(player))
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -85,11 +85,31 @@ public class PlayerService {
         if (playerRepository == null) {
             throw new EntityNotFoundException("No existe ningún jugador");
         }
+
         List<Player> players = playerRepository.findAll();
         float count = 0;
         for (Player x : players) {
             count += (float) x.calculateWinningAverage();
         }
         return count / players.size();
+    }
+
+    // Retorna lista por si hay mas de un jugador con el mismo promedio.
+    public List<PlayerDTO> getPlayerWorseAverage() {
+        if (playerRepository == null) {
+            throw new EntityNotFoundException("No existe ningún jugador");
+        }
+
+        Optional<Player> playerWorseAverage = playerRepository.findAll().stream()
+                .min(Comparator.comparingDouble(Player::calculateWinningAverage));
+
+        if (playerWorseAverage.isPresent()){
+            double worseAverage = playerWorseAverage.get().calculateWinningAverage();
+            List<Player> sameAverage = playerRepository.findAll().stream()
+                    .filter(player -> player.calculateWinningAverage() == worseAverage)
+                    .toList();
+            return sameAverage.stream().map(this::toDTO).toList();
+        }
+        return null;
     }
 }
