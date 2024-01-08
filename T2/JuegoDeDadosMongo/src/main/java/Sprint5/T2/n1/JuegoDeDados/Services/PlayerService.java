@@ -45,10 +45,15 @@ public class PlayerService {
 
     public void updatePlayerName(String id, String newName) {
         Optional<Player> existingPlayer = playerRepository.findById(id);
+        Optional<Player> existingName = playerRepository.findPlayerByName(newName);
         if (existingPlayer.isPresent()) {
-            Player updatedPlayer = existingPlayer.get();
-            updatedPlayer.setName(newName);
-            playerRepository.save(updatedPlayer);
+            if (!existingName.isPresent()) {
+                Player updatedPlayer = existingPlayer.get();
+                updatedPlayer.setName(newName);
+                playerRepository.save(updatedPlayer);
+            } else {
+                throw new IllegalStateException("Name already exists");
+            }
         } else {
             throw new IllegalStateException("Player not found");
         }
@@ -77,7 +82,7 @@ public class PlayerService {
         }
         Optional<Player> optionalPlayer = playerRepository.findById(id);
 
-        if (optionalPlayer.isPresent()){
+        if (optionalPlayer.isPresent()) {
             Player player = optionalPlayer.get();
             return gameService.getGamesByPlayer(player);
         }
@@ -106,7 +111,7 @@ public class PlayerService {
         Optional<Player> playerWorseAverage = playerRepository.findAll().stream()
                 .min(Comparator.comparingDouble(Player::calculateWinningAverage));
 
-        if (playerWorseAverage.isPresent()){
+        if (playerWorseAverage.isPresent()) {
             double worseAverage = playerWorseAverage.get().calculateWinningAverage();
             List<Player> sameAverage = playerRepository.findAll().stream()
                     .filter(player -> player.calculateWinningAverage() == worseAverage)
@@ -125,7 +130,7 @@ public class PlayerService {
         Optional<Player> playerWorseAverage = playerRepository.findAll().stream()
                 .max(Comparator.comparingDouble(Player::calculateWinningAverage));
 
-        if (playerWorseAverage.isPresent()){
+        if (playerWorseAverage.isPresent()) {
             double bestAverage = playerWorseAverage.get().calculateWinningAverage();
             List<Player> sameAverage = playerRepository.findAll().stream()
                     .filter(player -> player.calculateWinningAverage() == bestAverage)

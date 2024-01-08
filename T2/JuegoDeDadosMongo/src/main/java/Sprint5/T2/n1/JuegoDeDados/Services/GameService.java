@@ -9,10 +9,7 @@ import Sprint5.T2.n1.JuegoDeDados.Repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class GameService {
@@ -29,17 +26,30 @@ public class GameService {
     }
 
     public void newGameByIdPlayer(PlayerRepository playerRepository, String id) {
-        Optional<Player> existingPlayer = playerRepository.findById(id);
-        if (existingPlayer.isPresent()) {
-            byte dice1 = (byte) (Math.random() * 6 + 1);
-            byte dice2 = (byte) (Math.random() * 6 + 1);
-            Game game = new Game(existingPlayer.get(), dice1, dice2);
+        Optional<Player> existingPlayerOptional = playerRepository.findById(id);
 
-            existingPlayer.get().getGames().add(game);
+        if (existingPlayerOptional.isPresent()) {
+            Player existingPlayer = existingPlayerOptional.get();
+
+            // Verificar que la lista no sea null
+            /*if (existingPlayer.getGames() == null) {
+                existingPlayer.setGames(new ArrayList<>());
+            }*/
+
+            byte dice1 = rolldice();
+            byte dice2 = rolldice();
+
+            Game game = new Game(existingPlayer, dice1, dice2);
+
+            existingPlayer.getGames().add(game);
             gameRepository.save(game);
         } else {
-            throw new IllegalStateException("Jugador no encontrado");
+            throw new NoSuchElementException("Jugador no encontrado");
         }
+    }
+
+    private byte rolldice() {
+        return (byte) (Math.random() * 6 + 1);
     }
 
     public void deleteAllGamesByIdPlayer(PlayerRepository playerRepository, String id) {
@@ -56,7 +66,7 @@ public class GameService {
 
     public Map<String, Object> getGamesByPlayer(Player player) {
 
-        if (player.getGames().isEmpty()){
+        if (player.getGames().isEmpty()) {
             throw new NoGamesFoundException(player.getName());
         }
 

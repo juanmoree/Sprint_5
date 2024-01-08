@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Game {
 
     @Id
-    private String id;
+    private String idGame;
     private boolean win;
     private byte dice1;
     private byte dice2;
