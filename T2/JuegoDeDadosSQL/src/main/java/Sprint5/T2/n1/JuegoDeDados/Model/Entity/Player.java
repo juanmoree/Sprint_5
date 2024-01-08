@@ -40,6 +40,13 @@ public class Player {
         }
         return (double) totalWonGames / totalGames * 100;
     }
-
-
+    
+    @Override
+    public String toString(){
+        return "Player{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                '}';
+    }
 }
