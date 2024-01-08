@@ -31,18 +31,13 @@ public class GameService {
         if (existingPlayerOptional.isPresent()) {
             Player existingPlayer = existingPlayerOptional.get();
 
-            // Verificar que la lista no sea null
-            /*if (existingPlayer.getGames() == null) {
-                existingPlayer.setGames(new ArrayList<>());
-            }*/
-
             byte dice1 = rolldice();
             byte dice2 = rolldice();
 
             Game game = new Game(existingPlayer, dice1, dice2);
 
-            existingPlayer.getGames().add(game);
             gameRepository.save(game);
+            playerRepository.save(existingPlayer);
         } else {
             throw new NoSuchElementException("Jugador no encontrado");
         }

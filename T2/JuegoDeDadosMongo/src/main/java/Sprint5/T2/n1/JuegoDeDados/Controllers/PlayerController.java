@@ -38,7 +38,7 @@ public class PlayerController {
 
     @PostMapping("/{id}/games")
     public ResponseEntity<String> playerRollsDice(@PathVariable String id) {
-        playerService.playerRollsDice(String.valueOf(id));
+        playerService.playerRollsDice(id);
         return new ResponseEntity<>("Tirada realizada con éxito", HttpStatus.OK);
     }
 

@@ -2,10 +2,11 @@ package Sprint5.T2.n1.JuegoDeDados.Model.Entity;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document(collection = "games")
+@Document
 public class Game {
 
     @Id
@@ -13,6 +14,7 @@ public class Game {
     private boolean win;
     private byte dice1;
     private byte dice2;
+    @DBRef
     private Player player;
 
     public Game (){}
@@ -24,10 +26,10 @@ public class Game {
         player.getGames().add(this);
     }
 
-    public Game (byte dice1, byte dice2){
+    /*public Game (byte dice1, byte dice2){
         this.dice1 = dice1;
         this.dice2 = dice2;
         this.win = (dice1 + dice2) == 7;
         player.getGames().add(this);
-    }
+    }*/
 }
