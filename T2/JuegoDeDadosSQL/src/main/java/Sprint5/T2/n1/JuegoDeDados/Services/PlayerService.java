@@ -46,10 +46,15 @@ public class PlayerService {
 
     public void updatePlayerName(Long id, String newName) {
         Optional<Player> existingPlayer = playerRepository.findById(id);
+        Optional<Player> existingName = playerRepository.findPlayerByName(newName);
         if (existingPlayer.isPresent()) {
-            Player updatedPlayer = existingPlayer.get();
-            updatedPlayer.setName(newName);
-            playerRepository.save(updatedPlayer);
+            if (!existingName.isPresent()) {
+                Player updatedPlayer = existingPlayer.get();
+                updatedPlayer.setName(newName);
+                playerRepository.save(updatedPlayer);
+            } else {
+                throw new IllegalStateException("Name already exists");
+            }
         } else {
             throw new IllegalStateException("Player not found");
         }
