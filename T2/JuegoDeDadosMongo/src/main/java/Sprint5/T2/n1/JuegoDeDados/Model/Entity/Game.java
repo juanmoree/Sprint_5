@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document
+@Document ("games")
 public class Game {
 
     @Id
@@ -25,11 +25,4 @@ public class Game {
         this.win = (dice1 + dice2) == 7;
         player.getGames().add(this);
     }
-
-    /*public Game (byte dice1, byte dice2){
-        this.dice1 = dice1;
-        this.dice2 = dice2;
-        this.win = (dice1 + dice2) == 7;
-        player.getGames().add(this);
-    }*/
 }
