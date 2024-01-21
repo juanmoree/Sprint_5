@@ -2,9 +2,11 @@ package Sprint5.T2.n1.JuegoDeDados.Model.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Game {
 
     @Id
@@ -17,16 +19,8 @@ public class Game {
     @JoinColumn(name = "player_id") // Verificar nombre
     private Player player;
 
-    public Game (){}
     public Game (Player player, byte dice1, byte dice2){
         this.player = player;
-        this.dice1 = dice1;
-        this.dice2 = dice2;
-        this.win = (dice1 + dice2) == 7;
-        player.getGames().add(this);
-    }
-
-    public Game (byte dice1, byte dice2){
         this.dice1 = dice1;
         this.dice2 = dice2;
         this.win = (dice1 + dice2) == 7;

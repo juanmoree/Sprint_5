@@ -7,6 +7,7 @@ import Sprint5.T2.n1.JuegoDeDados.Model.Entity.Player;
 import Sprint5.T2.n1.JuegoDeDados.Repository.GameRepository;
 import Sprint5.T2.n1.JuegoDeDados.Repository.PlayerRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +17,12 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class GameService {
 
     @Autowired
     private final GameRepository gameRepository;
-
-    public GameService(GameRepository gameRepository) {
-        this.gameRepository = gameRepository;
-    }
+    private final PlayerRepository playerRepository;
 
     public GameDTO toDTO(Player player, Game game) {
         return new GameDTO(player, game);
@@ -48,6 +47,22 @@ public class GameService {
 
     private byte rolldice() {
         return (byte) (Math.random() * 6 + 1);
+    }
+
+    public void playerRollsDice(Long id) {
+        newGameByIdPlayer(playerRepository, id);
+    }
+    public void playerDeleteGames(Long id) {
+        deleteAllGamesByIdPlayer(playerRepository, id);
+    }
+
+    public Map<String, Object> getPlayerGamesById(Long id) {
+        if (!playerRepository.existsById(id)) {
+            throw new EntityNotFoundException("No existe un jugador con el id " + id);
+        }
+        Player player = playerRepository.getReferenceById(id);
+
+        return getGamesByPlayer(player);
     }
 
     public void deleteAllGamesByIdPlayer(PlayerRepository playerRepository, Long id) {

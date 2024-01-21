@@ -1,10 +1,14 @@
 package Sprint5.T2.n1.JuegoDeDados.Services;
 
 import Sprint5.T2.n1.JuegoDeDados.Model.DTO.PlayerDTO;
+import Sprint5.T2.n1.JuegoDeDados.Model.DTO.RegisterPlayerDTO;
+import Sprint5.T2.n1.JuegoDeDados.Model.ERole;
 import Sprint5.T2.n1.JuegoDeDados.Model.Entity.Player;
+import Sprint5.T2.n1.JuegoDeDados.Model.Entity.RoleEntity;
 import Sprint5.T2.n1.JuegoDeDados.Repository.PlayerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -44,6 +48,25 @@ public class PlayerService {
         playerRepository.save(player);
     }
 
+    public ResponseEntity<?> registerPlayer(RegisterPlayerDTO registerPlayerDTO) {
+
+        Set<RoleEntity> roles = registerPlayerDTO.getRoles().stream()
+                .map(role -> RoleEntity.builder()
+                        .name(ERole.valueOf(role))
+                        .build())
+                .collect(Collectors.toSet());
+
+        Player player = Player.builder()
+                .name(registerPlayerDTO.getName())
+                .password(registerPlayerDTO.getPassword())
+                .email(registerPlayerDTO.getEmail())
+                .roles(roles)
+                .build();
+
+        playerRepository.save(player);
+        return ResponseEntity.ok(player);
+    }
+
     public void updatePlayerName(Long id, String newName) {
         Optional<Player> existingPlayer = playerRepository.findById(id);
         Optional<Player> existingName = playerRepository.findPlayerByName(newName);
@@ -60,14 +83,6 @@ public class PlayerService {
         }
     }
 
-    public void playerRollsDice(Long id) {
-        gameService.newGameByIdPlayer(playerRepository, id);
-    }
-
-    public void playerDeleteGames(Long id) {
-        gameService.deleteAllGamesByIdPlayer(playerRepository, id);
-    }
-
     public List<PlayerDTO> getPlayersWithAverage() {
         List<Player> players = playerRepository.findAll();
 
@@ -75,15 +90,6 @@ public class PlayerService {
         return players.stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
-    }
-
-    public Map<String, Object> getPlayerGamesById(Long id) {
-        if (!playerRepository.existsById(id)) {
-            throw new EntityNotFoundException("No existe un jugador con el id " + id);
-        }
-        Player player = playerRepository.getReferenceById(id);
-
-        return gameService.getGamesByPlayer(player);
     }
 
     public float getAverageRankingPlayers() {
@@ -136,4 +142,6 @@ public class PlayerService {
         }
         return null;
     }
+
+
 }
