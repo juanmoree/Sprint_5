@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class PlayerService {
-    //Solucionar, ya que si se reinicia la app el contador vuelve a 1, se debe mantener en el numero anteriormente guardado.
     private static Long anonymousCounter = 1L;
     @Autowired
     private final PlayerRepository playerRepository;
