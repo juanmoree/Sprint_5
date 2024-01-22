@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class PlayerService {
+    //Solucionar, ya que si se reinicia la app el contador vuelve a 1, se debe mantener en el numero anteriormente guardado.
     private static Long anonymousCounter = 1L;
     @Autowired
     private final PlayerRepository playerRepository;
@@ -43,7 +44,6 @@ public class PlayerService {
         // Verificar si el nombre es nulo o está vacío.
         if (playerDTO.getName() == null || playerDTO.getName().trim().isEmpty()) {
             playerDTO.setName("Anónimo" + anonymousCounter);
-            playerDTO.getRoles().add("INVITED");
             anonymousCounter++;
         } else {
             // Obtener el Optional
@@ -92,7 +92,7 @@ public class PlayerService {
         List<Player> players = playerRepository.findAll();
         float count = 0;
         for (Player x : players) {
-            count += (float) x.getWinningAverage();
+            count += (float) x.calculateWinningAverage();
         }
         return count / players.size();
     }
@@ -103,11 +103,11 @@ public class PlayerService {
             throw new EntityNotFoundException("No existe ningún jugador");
         }
         Optional<Player> playerWorseAverage = playerRepository.findAll().stream()
-                .min(Comparator.comparingDouble(Player::getWinningAverage));
+                .min(Comparator.comparingDouble(Player::calculateWinningAverage));
         if (playerWorseAverage.isPresent()){
-            double worseAverage = playerWorseAverage.get().getWinningAverage();
+            double worseAverage = playerWorseAverage.get().calculateWinningAverage();
             List<Player> sameAverage = playerRepository.findAll().stream()
-                    .filter(player -> player.getWinningAverage() == worseAverage)
+                    .filter(player -> player.calculateWinningAverage() == worseAverage)
                     .toList();
             return sameAverage.stream().map(this::toDTO).toList();
         }
@@ -120,11 +120,11 @@ public class PlayerService {
             throw new EntityNotFoundException("No existe ningún jugador");
         }
         Optional<Player> playerWorseAverage = playerRepository.findAll().stream()
-                .max(Comparator.comparingDouble(Player::getWinningAverage));
+                .max(Comparator.comparingDouble(Player::calculateWinningAverage));
         if (playerWorseAverage.isPresent()){
-            double bestAverage = playerWorseAverage.get().getWinningAverage();
+            double bestAverage = playerWorseAverage.get().calculateWinningAverage();
             List<Player> sameAverage = playerRepository.findAll().stream()
-                    .filter(player -> player.getWinningAverage() == bestAverage)
+                    .filter(player -> player.calculateWinningAverage() == bestAverage)
                     .toList();
             return sameAverage.stream().map(this::toDTO).toList();
         }

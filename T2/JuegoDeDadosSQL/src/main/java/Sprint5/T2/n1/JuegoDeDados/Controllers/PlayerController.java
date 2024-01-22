@@ -1,7 +1,6 @@
 package Sprint5.T2.n1.JuegoDeDados.Controllers;
 
 import Sprint5.T2.n1.JuegoDeDados.Model.DTO.PlayerDTO;
-import Sprint5.T2.n1.JuegoDeDados.Model.Entity.Player;
 import Sprint5.T2.n1.JuegoDeDados.Services.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,11 +25,6 @@ public class PlayerController {
     public ResponseEntity<?> addPlayer(@Validated @RequestBody PlayerDTO playerDTO){
         return playerService.addPlayer(playerDTO);
     }
-    /*@PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void addPlayer(@RequestBody Player player) {
-        playerService.addPlayer(player);
-    }*/
 
     @PutMapping
     @ResponseStatus (HttpStatus.OK)
@@ -61,5 +55,4 @@ public class PlayerController {
     public List<PlayerDTO> playerBestAverage(){
         return playerService.getPlayerBestAverage();
     }
-
 }

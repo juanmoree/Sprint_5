@@ -90,7 +90,7 @@ public class GameService {
                 .toList();
 
         response.put("name", player.getName());
-        response.put("average", player.getWinningAverage());
+        response.put("average", player.calculateWinningAverage());
         response.put("games", games);
 
         return response;

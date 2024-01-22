@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,6 +27,6 @@ public class PlayerDTO {
     public PlayerDTO(Player player) {
         this.name = player.getName();
         this.games = player.getGames();
-        this.average = player.getWinningAverage();
+        this.average = player.calculateWinningAverage();
     }
 }

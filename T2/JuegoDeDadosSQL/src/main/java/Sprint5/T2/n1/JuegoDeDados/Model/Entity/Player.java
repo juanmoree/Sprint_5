@@ -38,13 +38,13 @@ public class Player {
     @JoinTable(name = "player_roles",
             joinColumns = @JoinColumn(name = "fk_player_id"),
             inverseJoinColumns = @JoinColumn(name = "fk_roles_id"))
+    @JsonIgnore
     private Set<RoleEntity> roles;
 
     @Column(unique = true)
     private String name;
     private String password;
     private LocalDate date = LocalDate.now();
-    private double winningAverage;
 
     public Player(PlayerDTO playerDTO) {
         this.name = playerDTO.getName();
@@ -52,14 +52,13 @@ public class Player {
         this.games = new ArrayList<>();
     }
 
-    @PostLoad
-    public void calculateWinningAverage() {
+    public double calculateWinningAverage() {
         long totalWonGames = getGames().stream().filter(Game::isWin).count();
         long totalGames = getGames().size();
 
         if (totalGames == 0) {
-            this.winningAverage = 0.0;
+            return 0.0;
         } else
-            this.winningAverage = (double) totalWonGames / totalGames * 100;
+            return (double) totalWonGames / totalGames * 100;
     }
 }
