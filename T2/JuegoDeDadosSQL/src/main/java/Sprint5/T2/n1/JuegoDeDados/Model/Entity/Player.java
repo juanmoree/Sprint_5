@@ -1,5 +1,6 @@
 package Sprint5.T2.n1.JuegoDeDados.Model.Entity;
 
+import Sprint5.T2.n1.JuegoDeDados.Model.DTO.PlayerDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,31 +25,41 @@ public class Player {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    private String email;
-
-    @Column(unique = true)
-    private String name;
-
-    private String password;
-    private LocalDate date = LocalDate.now();
-
-    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "player",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     @JsonIgnore // Evita que se serialice la lista de juegos cuando se serializa el jugador.
     private List<Game> games;
 
-    @ManyToMany (fetch = FetchType.EAGER, targetEntity = RoleEntity.class, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER, // Traer todos los roles de una vez
+            targetEntity = RoleEntity.class,
+            cascade = CascadeType.PERSIST) // No borra los roles al borrar un usuario
     @JoinTable(name = "player_roles",
             joinColumns = @JoinColumn(name = "fk_player_id"),
             inverseJoinColumns = @JoinColumn(name = "fk_roles_id"))
     private Set<RoleEntity> roles;
 
-    public double calculateWinningAverage() {
+    @Column(unique = true)
+    private String name;
+    private String password;
+    private LocalDate date = LocalDate.now();
+    private double winningAverage;
+
+    public Player(PlayerDTO playerDTO) {
+        this.name = playerDTO.getName();
+        this.password = playerDTO.getPassword();
+        this.games = new ArrayList<>();
+    }
+
+    @PostLoad
+    public void calculateWinningAverage() {
         long totalWonGames = getGames().stream().filter(Game::isWin).count();
         long totalGames = getGames().size();
 
         if (totalGames == 0) {
-            return 0.0;
-        }
-        return (double) totalWonGames / totalGames * 100;
+            this.winningAverage = 0.0;
+        } else
+            this.winningAverage = (double) totalWonGames / totalGames * 100;
     }
 }

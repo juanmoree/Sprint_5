@@ -1,7 +1,6 @@
 package Sprint5.T2.n1.JuegoDeDados.Services;
 
 import Sprint5.T2.n1.JuegoDeDados.Model.DTO.PlayerDTO;
-import Sprint5.T2.n1.JuegoDeDados.Model.DTO.RegisterPlayerDTO;
 import Sprint5.T2.n1.JuegoDeDados.Model.ERole;
 import Sprint5.T2.n1.JuegoDeDados.Model.Entity.Player;
 import Sprint5.T2.n1.JuegoDeDados.Model.Entity.RoleEntity;
@@ -17,13 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class PlayerService {
     private static Long anonymousCounter = 1L;
-    private final GameService gameService;
     @Autowired
     private final PlayerRepository playerRepository;
 
 
-    public PlayerService(GameService gameService, PlayerRepository playerRepository) {
-        this.gameService = gameService;
+    public PlayerService(PlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
     }
 
@@ -31,38 +28,34 @@ public class PlayerService {
         return new PlayerDTO(player);
     }
 
-    public void addPlayer(Player player) {
-
-        // Verificar si el nombre es nulo o está vacío.
-        if (player.getName() == null || player.getName().trim().isEmpty()) {
-            player.setName("Anónimo" + anonymousCounter);
-            anonymousCounter++;
-        } else {
-            // Obtener el Optional
-            Optional<Player> existingPlayerOptional = playerRepository.findPlayerByName(player.getName());
-
-            if (existingPlayerOptional.isPresent()) {
-                throw new IllegalStateException("Player with the same name already exists");
-            }
-        }
-        playerRepository.save(player);
+    public Player toEntity(PlayerDTO playerDTO){
+        return new Player(playerDTO);
     }
 
-    public ResponseEntity<?> registerPlayer(RegisterPlayerDTO registerPlayerDTO) {
+    public ResponseEntity<?> addPlayer(PlayerDTO playerDTO) {
 
-        Set<RoleEntity> roles = registerPlayerDTO.getRoles().stream()
+        Set<RoleEntity> roles = playerDTO.getRoles().stream()
                 .map(role -> RoleEntity.builder()
                         .name(ERole.valueOf(role))
                         .build())
                 .collect(Collectors.toSet());
 
-        Player player = Player.builder()
-                .name(registerPlayerDTO.getName())
-                .password(registerPlayerDTO.getPassword())
-                .email(registerPlayerDTO.getEmail())
-                .roles(roles)
-                .build();
+        // Verificar si el nombre es nulo o está vacío.
+        if (playerDTO.getName() == null || playerDTO.getName().trim().isEmpty()) {
+            playerDTO.setName("Anónimo" + anonymousCounter);
+            playerDTO.getRoles().add("INVITED");
+            anonymousCounter++;
+        } else {
+            // Obtener el Optional
+            Optional<Player> existingPlayerOptional = playerRepository.findPlayerByName(playerDTO.getName());
 
+            if (existingPlayerOptional.isPresent()) {
+                throw new IllegalStateException("Player with the same name already exists");
+            }
+        }
+
+        Player player = toEntity(playerDTO);
+        player.setRoles(roles);
         playerRepository.save(player);
         return ResponseEntity.ok(player);
     }
@@ -86,7 +79,6 @@ public class PlayerService {
     public List<PlayerDTO> getPlayersWithAverage() {
         List<Player> players = playerRepository.findAll();
 
-
         return players.stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
@@ -100,7 +92,7 @@ public class PlayerService {
         List<Player> players = playerRepository.findAll();
         float count = 0;
         for (Player x : players) {
-            count += (float) x.calculateWinningAverage();
+            count += (float) x.getWinningAverage();
         }
         return count / players.size();
     }
@@ -110,14 +102,12 @@ public class PlayerService {
         if (playerRepository == null) {
             throw new EntityNotFoundException("No existe ningún jugador");
         }
-
         Optional<Player> playerWorseAverage = playerRepository.findAll().stream()
-                .min(Comparator.comparingDouble(Player::calculateWinningAverage));
-
+                .min(Comparator.comparingDouble(Player::getWinningAverage));
         if (playerWorseAverage.isPresent()){
-            double worseAverage = playerWorseAverage.get().calculateWinningAverage();
+            double worseAverage = playerWorseAverage.get().getWinningAverage();
             List<Player> sameAverage = playerRepository.findAll().stream()
-                    .filter(player -> player.calculateWinningAverage() == worseAverage)
+                    .filter(player -> player.getWinningAverage() == worseAverage)
                     .toList();
             return sameAverage.stream().map(this::toDTO).toList();
         }
@@ -129,19 +119,15 @@ public class PlayerService {
         if (playerRepository == null) {
             throw new EntityNotFoundException("No existe ningún jugador");
         }
-
         Optional<Player> playerWorseAverage = playerRepository.findAll().stream()
-                .max(Comparator.comparingDouble(Player::calculateWinningAverage));
-
+                .max(Comparator.comparingDouble(Player::getWinningAverage));
         if (playerWorseAverage.isPresent()){
-            double bestAverage = playerWorseAverage.get().calculateWinningAverage();
+            double bestAverage = playerWorseAverage.get().getWinningAverage();
             List<Player> sameAverage = playerRepository.findAll().stream()
-                    .filter(player -> player.calculateWinningAverage() == bestAverage)
+                    .filter(player -> player.getWinningAverage() == bestAverage)
                     .toList();
             return sameAverage.stream().map(this::toDTO).toList();
         }
         return null;
     }
-
-
 }
