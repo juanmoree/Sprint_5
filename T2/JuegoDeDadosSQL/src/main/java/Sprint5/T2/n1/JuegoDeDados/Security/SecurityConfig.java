@@ -1,23 +1,32 @@
 package Sprint5.T2.n1.JuegoDeDados.Security;
 
+import Sprint5.T2.n1.JuegoDeDados.Security.Filters.JwtAuthenticationFilter;
+import Sprint5.T2.n1.JuegoDeDados.Security.JWT.JwtUtils;
+import Sprint5.T2.n1.JuegoDeDados.Services.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+    @Autowired
+    JwtUtils jwtUtils;
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception { // Seguridad de nuestra app
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception { // Seguridad de nuestra app
+
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils);
+        jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
+        // jwtAuthenticationFilter.setFilterProcessesUrl("/login"); ??
         return httpSecurity
                 .csrf(config -> config.disable())
                 .authorizeHttpRequests(auth -> {
@@ -27,12 +36,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
-                .httpBasic()
-                .and()
+                .addFilter(jwtAuthenticationFilter)
                 .build();
     }
 
-    @Bean
+/*    @Bean
     UserDetailsService userDetailsService() { // Usuario de acceso (Permiso a la app)
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
         manager.createUser(User.withUsername("Playerx")
@@ -41,7 +49,7 @@ public class SecurityConfig {
                 .build());
 
         return manager;
-    }
+    }*/
 
     @Bean
     PasswordEncoder passwordEncoder(){
@@ -52,8 +60,9 @@ public class SecurityConfig {
     @Bean
     AuthenticationManager authenticationManager(HttpSecurity httpSecurity, PasswordEncoder passwordEncoder) throws Exception {
         return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailsService())
+                .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder())
                 .and().build();
     }
+
 }
