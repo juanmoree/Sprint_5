@@ -5,6 +5,7 @@ import Sprint5.T2.n1.JuegoDeDados.Services.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class PlayerController {
     }
 
     @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus (HttpStatus.OK)
     public void updatePlayer(@RequestBody Map<String, Object> data) {
         Long playerId = Long.parseLong(data.get("id").toString());

@@ -4,6 +4,7 @@ import Sprint5.T2.n1.JuegoDeDados.Services.GameService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -22,6 +23,7 @@ public class GameController {
     }
 
     @DeleteMapping("{id}/games")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> playerDeleteGames(@PathVariable Long id) {
         gameService.playerDeleteGames(id);
         return new ResponseEntity<>("Partidas eliminadas con éxito", HttpStatus.OK);
