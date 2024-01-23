@@ -8,6 +8,7 @@ import Sprint5.T2.n1.JuegoDeDados.Repository.PlayerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,10 +19,13 @@ public class PlayerService {
     private static Long anonymousCounter = 1L;
     @Autowired
     private final PlayerRepository playerRepository;
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
 
 
-    public PlayerService(PlayerRepository playerRepository) {
+    public PlayerService(PlayerRepository playerRepository, PasswordEncoder passwordEncoder) {
         this.playerRepository = playerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public PlayerDTO toDTO(Player player) {
@@ -55,6 +59,7 @@ public class PlayerService {
 
         Player player = toEntity(playerDTO);
         player.setRoles(roles);
+        player.setPassword(passwordEncoder.encode(playerDTO.getPassword()));
         playerRepository.save(player);
         return ResponseEntity.ok(player);
     }

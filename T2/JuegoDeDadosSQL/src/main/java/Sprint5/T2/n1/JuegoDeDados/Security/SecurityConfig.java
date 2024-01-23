@@ -33,7 +33,6 @@ public class SecurityConfig {
 
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils);
         jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
-        // jwtAuthenticationFilter.setFilterProcessesUrl("/login"); ??
         return httpSecurity
                 .csrf(config -> config.disable())
                 .authorizeHttpRequests(auth -> {
@@ -47,17 +46,6 @@ public class SecurityConfig {
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
-/*    @Bean
-    UserDetailsService userDetailsService() { // Usuario de acceso (Permiso a la app)
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("Playerx")
-                .password("12345")
-                .roles()
-                .build());
-
-        return manager;
-    }*/
 
     @Bean
     PasswordEncoder passwordEncoder(){

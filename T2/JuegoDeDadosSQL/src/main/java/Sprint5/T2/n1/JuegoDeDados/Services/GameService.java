@@ -60,7 +60,11 @@ public class GameService {
         if (!playerRepository.existsById(id)) {
             throw new EntityNotFoundException("No existe un jugador con el id " + id);
         }
+
         Player player = playerRepository.getReferenceById(id);
+        if (player.getGames().isEmpty()){
+            throw new NoGamesFoundException(player.getName());
+        }
 
         return getGamesByPlayer(player);
     }
