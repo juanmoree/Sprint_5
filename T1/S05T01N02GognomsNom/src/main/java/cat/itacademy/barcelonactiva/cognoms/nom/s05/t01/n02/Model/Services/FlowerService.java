@@ -3,11 +3,19 @@ package cat.itacademy.barcelonactiva.cognoms.nom.s05.t01.n02.Model.Services;
 import cat.itacademy.barcelonactiva.cognoms.nom.s05.t01.n02.Model.DTO.FlowerDTO;
 import cat.itacademy.barcelonactiva.cognoms.nom.s05.t01.n02.Model.Domain.FlowerEntity;
 import cat.itacademy.barcelonactiva.cognoms.nom.s05.t01.n02.Model.Repository.FlowerRepository;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -96,5 +104,17 @@ public class FlowerService {
         return flowerRepository.findAll().stream().map(this::toDTO).toList();
     }
 
-
+    @Bean
+    public OpenAPI customOpenAPI() throws URISyntaxException, MalformedURLException {
+        URL web = new URI("http://github.com/juanmoree").toURL();
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Flowers management system")
+                        .version("1.0")
+                        .description("Create, update, get and delete flowers with this easy and fast system")
+                        .contact(new Contact()
+                                .name("Juan Moreno")
+                                .email("juanmoree@gmail.com")
+                                .url(String.valueOf(web))));
+    }
 }
