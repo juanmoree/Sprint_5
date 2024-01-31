@@ -6,6 +6,7 @@ import Sprint5.T2.n1.JuegoDeDados.Model.Entity.Player;
 import Sprint5.T2.n1.JuegoDeDados.Model.Entity.RoleEntity;
 import Sprint5.T2.n1.JuegoDeDados.Repository.PlayerRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,18 +16,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PlayerService {
     private static Long anonymousCounter = 1L;
     @Autowired
     private final PlayerRepository playerRepository;
     @Autowired
     private final PasswordEncoder passwordEncoder;
-
-
-    public PlayerService(PlayerRepository playerRepository, PasswordEncoder passwordEncoder) {
-        this.playerRepository = playerRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public PlayerDTO toDTO(Player player) {
         return new PlayerDTO(player);

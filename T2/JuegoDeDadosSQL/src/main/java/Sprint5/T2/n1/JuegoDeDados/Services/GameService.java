@@ -28,29 +28,30 @@ public class GameService {
         return new GameDTO(player, game);
     }
 
-    public void newGameByIdPlayer(PlayerRepository playerRepository, Long id) {
+    public GameDTO newGameByIdPlayer(PlayerRepository playerRepository, Long id) {
         Optional<Player> existingPlayerOptional = playerRepository.findById(id);
-
+        Game game = null;
         if (existingPlayerOptional.isPresent()) {
             Player existingPlayer = existingPlayerOptional.get();
             byte dice1 = rolldice();
             byte dice2 = rolldice();
 
-            Game game = new Game(existingPlayer, dice1, dice2);
+            game = new Game(existingPlayer, dice1, dice2);
 
             existingPlayer.getGames().add(game);
             gameRepository.save(game);
         } else {
             throw new EntityNotFoundException("Jugador no encontrado");
         }
+        return toDTO(existingPlayerOptional.get(), game);
     }
 
     private byte rolldice() {
         return (byte) (Math.random() * 6 + 1);
     }
 
-    public void playerRollsDice(Long id) {
-        newGameByIdPlayer(playerRepository, id);
+    public GameDTO playerRollsDice(Long id) {
+        return newGameByIdPlayer(playerRepository, id);
     }
     public void playerDeleteGames(Long id) {
         deleteAllGamesByIdPlayer(playerRepository, id);
