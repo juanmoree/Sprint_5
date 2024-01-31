@@ -17,7 +17,6 @@ public class GameDTO {
     private byte dice1;
     private byte dice2;
     private boolean win;
-    private double average;
 
     public GameDTO(Player player, Game game) {
         this.dice1 = game.getDice1();

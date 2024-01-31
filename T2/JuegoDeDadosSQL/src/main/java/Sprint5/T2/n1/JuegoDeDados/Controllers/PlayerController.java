@@ -24,7 +24,7 @@ public class PlayerController {
 
     @PostMapping
     public ResponseEntity<?> addPlayer(@Validated @RequestBody PlayerDTO playerDTO){
-        return playerService.addPlayer(playerDTO);
+        return ResponseEntity.ok(playerService.addPlayer(playerDTO));
     }
 
     @PutMapping

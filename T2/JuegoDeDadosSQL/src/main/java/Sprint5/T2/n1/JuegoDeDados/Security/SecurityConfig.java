@@ -5,6 +5,7 @@ import Sprint5.T2.n1.JuegoDeDados.Security.Filters.JwtAuthorizationFilter;
 import Sprint5.T2.n1.JuegoDeDados.Security.JWT.JwtUtils;
 import Sprint5.T2.n1.JuegoDeDados.Services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

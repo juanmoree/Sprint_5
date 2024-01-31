@@ -3,6 +3,7 @@ package Sprint5.T2.n1.JuegoDeDados.Model.DTO;
 import Sprint5.T2.n1.JuegoDeDados.Model.Entity.Game;
 import Sprint5.T2.n1.JuegoDeDados.Model.Entity.Player;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,10 +19,12 @@ import java.util.Set;
 public class PlayerDTO {
 
     private String name;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String password;
     @JsonIgnore
     private List<Game> games;
     private double average;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Set<String> roles;
 
     public PlayerDTO(Player player) {

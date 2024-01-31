@@ -36,13 +36,7 @@ public class PlayerService {
         return new Player(playerDTO);
     }
 
-    public ResponseEntity<?> addPlayer(PlayerDTO playerDTO) {
-
-        Set<RoleEntity> roles = playerDTO.getRoles().stream()
-                .map(role -> RoleEntity.builder()
-                        .name(ERole.valueOf(role))
-                        .build())
-                .collect(Collectors.toSet());
+    public Player addPlayer(PlayerDTO playerDTO) {
 
         // Verificar si el nombre es nulo o está vacío.
         if (playerDTO.getName() == null || playerDTO.getName().trim().isEmpty()) {
@@ -58,10 +52,20 @@ public class PlayerService {
         }
 
         Player player = toEntity(playerDTO);
-        player.setRoles(roles);
+
+        player.setRoles(setPlayerRoles(playerDTO));
         player.setPassword(passwordEncoder.encode(playerDTO.getPassword()));
         playerRepository.save(player);
-        return ResponseEntity.ok(player);
+
+        return player;
+    }
+
+    private Set<RoleEntity> setPlayerRoles(PlayerDTO playerDTO) {
+        return playerDTO.getRoles().stream()
+                .map(role -> RoleEntity.builder()
+                        .name(ERole.valueOf(role))
+                        .build())
+                .collect(Collectors.toSet());
     }
 
     public void updatePlayerName(Long id, String newName) {
